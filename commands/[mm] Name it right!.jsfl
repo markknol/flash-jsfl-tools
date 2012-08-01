@@ -1,7 +1,8 @@
 /**
  * Renames instance names, layers, library items with an easy wizard.
  * @version 2.7
- * @author: Mark Knol - http://blog.stroep.nl
+ * @author: Mediamonks - http://www.mediamonks.com
+ * @author: Mark Knol  - http://blog.stroep.nl
  */ 
 var doc = fl.getDocumentDOM();
 var selectedInstance;

@@ -1,11 +1,12 @@
 /**
- * Renames selected instances
+ * Rotates instances
  * @version 1
- * @author: Mark Knol - http://blog.stroep.nl
+ * @author: Mediamonks - http://www.mediamonks.com
+ * @author: Mark Knol  - http://blog.stroep.nl
  */ 
  
- 
 fl.outputPanel.clear();
+
 var doc = fl.getDocumentDOM();
 
 if (!doc)
@@ -14,10 +15,10 @@ if (!doc)
 }
 else
 {
-	Rename();
+	RandomRotation();
 }
 
-function Rename()
+function RandomRotation()
 {
 	var selectedItems = doc.selection;
 	
@@ -27,11 +28,10 @@ function Rename()
 		return;
 	}
 	
-	var newName = prompt('Enter new name (prefix):','');
+	var rotations = [0,90,180,270];
 	
-	for(var i = 0; i<selectedItems.length;i++)
+	for each(var selectedItem in selectedItems)
 	{
-		var selectedItem = selectedItems[i];
-		selectedItem.name = newName + (i+1);
+		selectedItem.rotation = rotations[Math.floor(Math.random() * rotations.length)];
 	}
 }

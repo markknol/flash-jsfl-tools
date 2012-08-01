@@ -1,7 +1,8 @@
 /**
- * Deep Duplicate tool
+ * Deep duplicate tool
  * @version 1.0
- * @author: Mark Knol - http://blog.stroep.nl
+ * @author: Mediamonks - http://www.mediamonks.com
+ * @author: Mark Knol  - http://blog.stroep.nl
  */ 
  
 var doc = fl.getDocumentDOM();

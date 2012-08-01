@@ -2,7 +2,8 @@
  * Scans the current timeline and outputs variable definitions for instance variables to the output window. The getChildByName-way.
  *
  * Original by http://code.google.com/p/fueljsfl
- * Modified by Mark Knol - http://blog.stroep.nl/
+ * @author: Mediamonks - http://www.mediamonks.com
+ * @author: Mark Knol  - http://blog.stroep.nl
  */ 
  
 fl.outputPanel.clear();
@@ -10,7 +11,8 @@ fl.outputPanel.clear();
 var items;
 var doc = fl.getDocumentDOM();
 
-var TEMPLATE1 = "\t\tpublic var {variableName}:{className};";
+var TEMPLATE1 = "\t\tprivate var _{variableName}:{className};";
+var TEMPLATE2 = "\t\tthis._{variableName} = {className}(this.getChildByName(\"{variableName}\"));";
 
 if (!doc)
 {
@@ -39,7 +41,7 @@ function LogInstanceNames()
 		for (var j = 0, lenj = layer.frames.length; j < lenj; j++)
 		{
 			frame = layer.frames[j];
-			if (j === frame.startFrame) // keyframes only
+			if (j == frame.startFrame) // keyframes only
 			{
 				for (var k = 0, lenk = frame.elements.length; k < lenk; k++)
 				{
@@ -49,6 +51,7 @@ function LogInstanceNames()
 					{
 						vars = {variableName:elem.name, className:"TextField"};
 						arr1.push(replaceVars(TEMPLATE1, vars));
+						arr2.push(replaceVars(TEMPLATE2, vars));
 						continue;
 					}
 
@@ -61,18 +64,21 @@ function LogInstanceNames()
 							cls = elem.libraryItem.linkageBaseClass.split(".").pop();
 							vars = {variableName:elem.name, className:cls};
 							arr1.push(replaceVars(TEMPLATE1, vars));
+							arr2.push(replaceVars(TEMPLATE2, vars));
 						}
 						else if (elem.libraryItem.linkageClassName && elem.name)
 						{
 							cls = elem.libraryItem.linkageClassName.split(".").pop();
 							vars = {variableName:elem.name, className:cls};
 							arr1.push(replaceVars(TEMPLATE1, vars));
+							arr2.push(replaceVars(TEMPLATE2, vars));
 						}
 					}
 					else if (elem.name)
 					{
 						vars = {variableName:elem.name, className:"MovieClip"};
 						arr1.push(replaceVars(TEMPLATE1, vars));
+						arr2.push(replaceVars(TEMPLATE2, vars));
 					}
 				}
 			}
@@ -91,7 +97,10 @@ function LogInstanceNames()
 	var output1 = unique(arr1).join("\n");
 	output1 = output1.substr(2, output1.length); // remove first 2 tabs for nice copy / paste
 	
-	fl.trace(output1);
+	fl.clipCopyString(output2);
+	var output2 = unique(arr2).join("\n");
+	
+	fl.trace("********* Part 1 *********\n\n" + output1 + "\n\n********* Part 2 *********\n\n" + output2);
 	
 	function unique(arr) 
 	{
