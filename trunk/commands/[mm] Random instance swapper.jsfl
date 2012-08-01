@@ -2,7 +2,8 @@
  * Random item swapper. 
  * Howto: Select multiple library items, select multiple items on stage. Randomize.
  * @version 1
- * @author: Mark Knol - http://blog.stroep.nl
+ * @author: Mediamonks - http://www.mediamonks.com
+ * @author: Mark Knol  - http://blog.stroep.nl
  */ 
  
 fl.outputPanel.clear();

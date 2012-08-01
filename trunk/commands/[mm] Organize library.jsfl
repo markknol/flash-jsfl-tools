@@ -1,4 +1,10 @@
-
+/**
+ * Organizes bitmaps, videos and sounds in right folders
+ * @version 1.0
+ * @author: Mediamonks - http://www.mediamonks.com
+ * @author: Mark Knol  - http://blog.stroep.nl
+ */ 
+ 
 var doc = fl.getDocumentDOM();
 
 if (!doc)

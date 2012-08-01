@@ -1,7 +1,8 @@
 /**
  * Renames layers according first item in layer. With coding standards warnings. Folders are skipped by default.
  * @version 1.5
- * @author: Mark Knol - http://blog.stroep.nl
+ * @author: Mediamonks - http://www.mediamonks.com
+ * @author: Mark Knol  - http://blog.stroep.nl
  */ 
  
 fl.outputPanel.clear();
