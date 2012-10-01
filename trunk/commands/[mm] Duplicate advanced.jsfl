@@ -1,8 +1,7 @@
 /**
- * Deep duplicate tool
+ * Deep Duplicate tool
  * @version 1.0
- * @author: Mediamonks - http://www.mediamonks.com
- * @author: Mark Knol  - http://blog.stroep.nl
+ * @author: Mark Knol - http://blog.stroep.nl
  */ 
  
 var doc = fl.getDocumentDOM();
@@ -197,8 +196,8 @@ function copyClassInfo(fromLibraryItem, toLibraryItem, persistExportRS)
 	{
 		linkageClassName = fromLibraryItem.linkageClassName;
 	}
-	toLibraryItem.linkageImportForRS = false;
-	toLibraryItem.linkageExportForRS = false;
+	if (toLibraryItem.linkageImportForRS) toLibraryItem.linkageImportForRS = false;
+	if (toLibraryItem.linkageExportForRS) toLibraryItem.linkageExportForRS = false;
 	
 	if (toLibraryItem && fromLibraryItem && (fromLibraryItem.linkageExportForAS || fromLibraryItem.linkageImportForRS))
 	{
