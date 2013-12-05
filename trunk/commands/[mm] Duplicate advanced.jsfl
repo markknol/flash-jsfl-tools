@@ -17,7 +17,7 @@ else
 {
 	DuplicateAdvanced();
 }
-doc.test = function(a) {alert("hi: " + a)}
+
 function DuplicateAdvanced()
 {
 	var selectedItems = doc.selection;
@@ -60,7 +60,7 @@ function DuplicateAdvanced()
 			
 			var libraryName = libraryNames[a];
 			
-			dialogXML += '<checkbox checked="true" id="checkbox_'+libraryName+'" label="' +libraryName+ '" width="280"/>';
+			dialogXML += '<checkbox checked="'+ (item.name == libraryName)+'" id="checkbox_'+libraryName+'" label="' +libraryName+ '" width="280"/>';
 			
 			if (libraryNames.length >= 8 && index % 4 == 3) dialogXML += '</hbox>';
 			index++;
@@ -71,7 +71,7 @@ function DuplicateAdvanced()
 		//oncommand="this.fl.xmlui.setEnabled(\'replaceFrom1\',false);this.o=\'\';for(a in fl) {this.o+=a+\':\'+fl[a]+\'\\n\'};alert(this.o);"
 		
 		dialogXML += '<separator/><label value="Enter new name pre- or postfix: (will apply to all newly created symbols)"/>'
-		dialogXML += '<hbox><textbox id="prefix" value="Cloned" width="150" /><label value=" + original symbol name + " width="130" /><textbox id="postfix" value="" width="150" /></hbox>';
+		dialogXML += '<hbox><textbox id="prefix" value="" width="150" /><label value=" + original symbol name + " width="130" /><textbox id="postfix" value="" width="150" /></hbox>';
 		dialogXML += '<separator/><label value="Replace values in selected symbol names: (case sensitive / will apply to all newly created symbols)"/>'
 		dialogXML += '<hbox><textbox id="replaceFrom1" value="" width="150" /><label value="                to " width="130"/><textbox id="replaceTo1" value="" width="150" /></hbox>';
 		dialogXML += '<hbox><textbox id="replaceFrom2" value="" width="150" /><label value="                to " width="130"/><textbox id="replaceTo2" value="" width="150" /></hbox>';
