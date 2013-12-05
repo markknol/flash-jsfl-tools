@@ -12,7 +12,7 @@ var items;
 var doc = fl.getDocumentDOM();
 
 var TEMPLATE1 = "\t\tprivate var _{variableName}:{className};";
-var TEMPLATE2 = "\t\tthis._{variableName} = {className}(this.getChildByName(\"{variableName}\"));";
+var TEMPLATE2 = "\t\t_{variableName} = {className}(this.getChildByName(\"{variableName}\"));";
 
 if (!doc)
 {
@@ -108,7 +108,7 @@ function LogInstanceNames()
 		var l = arr.length;
 		for(var i = 0; i < l; i++) 
 		{
-			for(var j = i + 1; j<  l; j++) 
+			for(var j = i + 1; j < l; j++) 
 			{
 				if (arr[i] === arr[j]) j = ++i;
 			}

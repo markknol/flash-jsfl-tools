@@ -1,6 +1,6 @@
 /**
  * Renames instance names, layers, library items with an easy wizard.
- * @version 2.7
+ * @version 2.8
  * @author: Mediamonks - http://www.mediamonks.com
  * @author: Mark Knol  - http://blog.stroep.nl
  */ 
@@ -30,16 +30,20 @@ function NameItRight()
 	{
 		if (confirm("Warning: You have selected multiple items.\nDo you want to convert your selection to a new library item?"))
 		{
-			convertToSymbol(DEFAULT_CLASS_NAME);
+			var newName;
+			if (doc.getTimeline().name == "Scene 1") newName = DEFAULT_CLASS_NAME;
+			else newName = doc.getTimeline().name + DEFAULT_CLASS_NAME;
+			
+			convertToSymbol(newName);
 			selectedInstance.libraryItem.linkageExportForAS = true;
-			selectedInstance.libraryItem.linkageClassName = getClassPackageName(selectedInstance.libraryItem) + "." + DEFAULT_CLASS_NAME;
+			selectedInstance.libraryItem.linkageClassName = getClassPackageName(selectedInstance.libraryItem) + "." + newName;
 			selectedInstance.libraryItem.linkageBaseClass = "flash.display.MovieClip";
 			
 			// when multiple items on current frame > distributeToLayers
-			if (selectedInstance.layer.frames[doc.getTimeline().currentFrame].elements.length > 1)
+			/*if (selectedInstance.layer.frames[doc.getTimeline().currentFrame].elements.length > 1)
 			{
 				fl.getDocumentDOM().distributeToLayers();
-			}
+			}*/
 		}
 		else
 		{
@@ -50,13 +54,24 @@ function NameItRight()
 	selectedInstance = doc.selection[0];
 	var base;
 	
-	if (!selectedInstance.libraryItem)
+	if (!selectedInstance.libraryItem || selectedInstance.instanceType == "bitmap")
 	{
 		if (confirm("Warning: Your selection is not a library item.\nDo you want to convert your selection to a new library item?"))
 		{
-			convertToSymbol(DEFAULT_CLASS_NAME);
+			var newName;
+			if (doc.getTimeline().name == "Scene 1") newName = DEFAULT_CLASS_NAME;
+			else newName = doc.getTimeline().name + DEFAULT_CLASS_NAME;
+			
+			// smart name
+			if (selectedInstance.instanceType == "bitmap") newName = upperCaseFirstLetter(selectedInstance.libraryItem.name.split(".").shift()) + "Image";
+			if (selectedInstance instanceof Text) 
+			{
+				if (doc.getTimeline().name == "Scene 1") newName = "MyLabel";
+				else newName = doc.getTimeline().name + "Label";
+			}
+			convertToSymbol(newName);
 			selectedInstance.libraryItem.linkageExportForAS = true;
-			selectedInstance.libraryItem.linkageClassName = getClassPackageName(selectedInstance.libraryItem) + "." + DEFAULT_CLASS_NAME;
+			selectedInstance.libraryItem.linkageClassName = getClassPackageName(selectedInstance.libraryItem) + "." + newName;
 			selectedInstance.libraryItem.linkageBaseClass = "flash.display.MovieClip";
 			
 			// when multiple items on current frame > distributeToLayers
@@ -83,6 +98,7 @@ function NameItRight()
 	 'temple.ui.animation.ContinualMovieClip',
 	 'temple.ui.animation.FrameStableMovieClip',
 	 'temple.ui.animation.SelfRemovieClip',
+	 'temple.multilanguage.elements.MultiLanguageMovieClip',
 	 'temple.ui.buttons.MultiStateButton',
 	 'temple.ui.buttons.MultiStateElement',
 	 'temple.ui.buttons.BaseButton',
@@ -96,6 +112,8 @@ function NameItRight()
 	 'temple.ui.layout.liquid.LiquidContainer',
 	 'temple.ui.layout.liquid.LiquidMovieClip',
 	 'temple.ui.layout.liquid.LiquidSprite',
+	 'temple.ui.ImageLoader',
+	 'temple.multilanguage.ui.MultiLanguageLabel',
 	 'temple.ui.label.Label',
 	 'temple.ui.label.LiquidLabel',
 	 'temple.ui.tooltip.ToolTip',
@@ -120,6 +138,9 @@ function NameItRight()
 	 'temple.ui.scroll.ScrollPane',
 	 'temple.ui.slider.SliderComponent',
 	 'temple.ui.slider.StepSliderComponent',
+	 'temple.ui.states.BaseState',
+	 'temple.ui.states.BaseFadeState',
+	 'temple.ui.states.BaseTimelineState',
 	 'temple.ui.states.disabled.DisabledState',
 	 'temple.ui.states.disabled.DisabledTimelineState',
 	 'temple.ui.states.disabled.DisabledFadeState',
@@ -189,7 +210,10 @@ function NameItRight()
 	}
 	else
 	{
-		dialogXML += '<checkbox id="exportFrame1" label="Export in frame 1" checked="' + selectedInstanceLibraryItem.linkageExportInFirstFrame + '"/>' + SEPARATOR_XML;
+		dialogXML += '<hbox>';
+		dialogXML += '<checkbox width="200" id="exportFrame1" label="Export in frame 1" checked="' + selectedInstanceLibraryItem.linkageExportInFirstFrame + '"/>';
+		dialogXML += '<checkbox id="runtimeSharedAsset" label="Runtime shared asset" checked="' + selectedInstanceLibraryItem.linkageExportForRS + '"/>';
+		dialogXML += '</hbox>'+ SEPARATOR_XML;
 	}
 	dialogXML += '<checkbox id="renameInstance" label="Add / rename instance name" checked="' + (localStorage.getProperty("renameInstance_checked") || true) + '"/>'
 	var settingsData = createDialogXML(dialogXML, 'Step 1 / 2 : Update the library item ' + selectedInstanceLibraryItem.name + '.');
@@ -215,6 +239,12 @@ function NameItRight()
 			}
 			selectedInstanceLibraryItem.linkageBaseClass = settingsData.step2_input;
 			selectedInstanceLibraryItem.linkageExportInFirstFrame = (settingsData.exportFrame1 == 'true');
+			selectedInstanceLibraryItem.linkageExportForRS = (settingsData.runtimeSharedAsset == 'true');
+			if (selectedInstanceLibraryItem.linkageExportForRS)
+			{
+				selectedInstanceLibraryItem.linkageExportInFirstFrame = true;
+				if (!selectedInstanceLibraryItem.linkageURL)selectedInstanceLibraryItem.linkageURL = doc.name.split(".fla").shift() + ".swf"
+			}
 		}
 		if (settingsData.renameInstance == 'true')
 		{
@@ -294,6 +324,13 @@ function NameItRight()
 	
 	function convertToSymbol(newName)
 	{
+		if (!fl.getDocumentDOM().library.itemExists(newName))
+		{
+			fl.getDocumentDOM().convertToSymbol("movie clip", newName, "top left");
+			selectedInstance = doc.selection[0];  
+			return;
+		}
+		
 		var count = 1; // start count
 		
 		while (count < 1000) 
@@ -305,7 +342,6 @@ function NameItRight()
 			}
 			count ++;
 		}
-		
 		// reset selection
 		selectedInstance = doc.selection[0];  
 	}
@@ -393,7 +429,7 @@ function NameItRight()
 	
 	function upperCaseFirstLetter(value)
 	{
-		return value.substring(0, 1).toUpperCase() + value.substr(1, selectedInstanceLibraryItem.name.length - 1);
+		return value.substring(0, 1).toUpperCase() + value.substr(1, value.length - 1);
 	}
 	
 	function getClassPackageName(item)
