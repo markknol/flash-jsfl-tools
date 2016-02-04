@@ -7,8 +7,6 @@ This is a place for sharing of Flash productivity tools, to work faster, better,
 
 ### The tools
 
-The tools
-
  * Library tools
    * Duplicate advanced - Deep copies timelines
    * Name it right! - Better alternative for 'symbol properties' window
@@ -37,6 +35,7 @@ The tools
  * Document tools
    * Compile All (open documents)
 
+Some of the tools are explained in [these blogposts](http://blog.stroep.nl/category/jsfl-2/)
 
 ### How to install jsfl files
 
