@@ -64,7 +64,7 @@ function createDialogXML(xmlString)
 	dialogXML += '<vbox>' + xmlString + '</vbox>';
 	dialogXML +='</dialog>';
 	
-	var url = fl.configURI + '/Commands/temp-dialog-' + parseInt(Math.random() * 777 * 777) + '.xml';
+	var url = fl.configURI + 'Commands/temp-dialog-' + parseInt(Math.random() * 777 * 777) + '.xml';
 	FLfile.write(url, dialogXML);
 	
 	var panelOutput = fl.getDocumentDOM().xmlPanel(url);
