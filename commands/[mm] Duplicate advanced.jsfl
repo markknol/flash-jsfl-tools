@@ -247,12 +247,9 @@ function createDialogXML(xmlString, title)
 	// Verify that the provided path ends with ‘/’
 	if (localConfigURI.charAt(localConfigURI.length – 1) != "/") localConfigURI = localConfigURI + "/";
 
-	var url = localConfigURI + 'Commands/temp-dialog-' + parseInt(Math.random() * 777 * 777) + '.xml';
-	FLfile.write(url, dialogXML);
-	
-	var panelOutput = fl.getDocumentDOM().xmlPanel(url);
-	
-	FLfile.remove(url); 
-	
-	return panelOutput;
+	var path = localConfigURI + "Commands/.dialog-" + parseInt(Math.random() * 1000) + ".xml"
+	FLfile.write(path, xmlString);
+	var xmlPanelOutput = fl.getDocumentDOM().xmlPanel(path);
+	FLfile.remove(path);
+	return xmlPanelOutput;
 }
