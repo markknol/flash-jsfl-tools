@@ -1,6 +1,6 @@
 /**
- * Convert selected bitmaps to new MovieClips in Library
- 
+ * Bitmap Selection to MovieClips
+ * @version 1
  * @author: Mediamonks - http://www.mediamonks.com
  * @author: Mark Knol  - http://blog.stroep.nl
  */ 
@@ -43,7 +43,8 @@ function SelectionToMovieClips()
 	
 	if (dialogData && dialogData.alignment)
 	{
-		var library = fl.getDocumentDOM().library;
+		var dom = fl.getDocumentDOM();
+		var library = dom.library;
 		
 		var count = 1;
 		
@@ -53,12 +54,16 @@ function SelectionToMovieClips()
 			
 			selectedItem.selected = true;
 			
-			//var newName = dialogData.prefix + count;
+			var newName = selectedItem.libraryItem.name.split("/").pop().split(".png").shift().split(".jpeg").shift().split(".jpg").shift().split(".gif").shift();
+			dom.convertToSymbol("movie clip", newName, dialogData.alignment);
 			
-			fl.getDocumentDOM().convertToSymbol("movie clip", selectedItem.libraryItem.name.split("/").pop().split(".png").shift().split(".jpeg").shift().split(".jpg").shift().split(".gif").shift(), dialogData.alignment);
+			var newLibraryIndex = dom.library.findItemIndex(newName);
+			var newLibraryItem = dom.library.items[newLibraryIndex];
+			setAsSprite(newLibraryItem);
 			
 			count ++
 			selectedItem.selected = false;
+			
 		}
 	}
 	
@@ -70,15 +75,35 @@ function SelectionToMovieClips()
 		dialogXML +='</vbox>';
 		dialogXML +='</dialog>';
 		
+		var url = fl.configURI + '/Commands/temp-dialog-' + parseInt(Math.random() * 777 * 777) + '.xml';
+		FLfile.write(url, dialogXML);
 		
-	var localConfigURI = fl.configURI;
-	// Verify that the provided path ends with ‘/’
-	if (localConfigURI.charAt(localConfigURI.length – 1) != "/") localConfigURI = localConfigURI + "/";
-
-	var path = localConfigURI + "Commands/.dialog-" + parseInt(Math.random() * 1000) + ".xml"
-	FLfile.write(path, xmlString);
-	var xmlPanelOutput = fl.getDocumentDOM().xmlPanel(path);
-	FLfile.remove(path);
-	return xmlPanelOutput;
+		var panelOutput = fl.getDocumentDOM().xmlPanel(url);
+		
+		FLfile.remove(url); 
+		
+		return panelOutput;
+	}
+	
+	function setAsSprite(item)
+	{
+		item.linkageExportForAS = true;
+		item.name = item.name.split("/").pop().split("-").join("_").split(" ").join("_");
+		item.linkageClassName = item.name.split("/").pop();
+		item.linkageBaseClass = "flash.display.Sprite";
+		item.linkageExportInFirstFrame = true;
+	}
+	
+	function getClassPackageName()
+	{
+		var retval = doc.name.toLowerCase().split('.fla')[0].split('.xfl')[0];
+		if (retval) retval = retval.split('..').join('.').split(' ').join('').split('-').join('_').toLowerCase();
+		return retval;
 	}
 }
+
+var scriptPath = FLfile.uriToPlatformPath(fl.scriptURI);
+var scriptPathEnd = scriptPath.lastIndexOf("\\");
+scriptPath = scriptPath.slice(0, scriptPathEnd + 1);
+fl.runScript(FLfile.platformPathToURI(scriptPath + "[mm] Organize library.jsfl"));
+fl.runScript(FLfile.platformPathToURI(scriptPath + "[mm] Check Flump library.jsfl"));
