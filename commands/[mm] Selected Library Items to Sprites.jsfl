@@ -27,8 +27,10 @@ function ItemsToSprites()
 	for (var i = 0, leni = items.length; i < leni; i++)
 	{
 		item = items[i];
+		if (item.itemType == "folder") continue;
 		
 		item.linkageExportForAS = true;
+		item.name = item.name.split("/").pop().split("-").join("_").split(" ").join("_");
 		item.linkageClassName = item.name.split("/").pop();
 		item.linkageBaseClass = "flash.display.Sprite";
 		item.linkageExportInFirstFrame = true;

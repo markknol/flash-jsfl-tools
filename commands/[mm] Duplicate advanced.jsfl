@@ -49,6 +49,7 @@ function DuplicateAdvanced()
 	var dialogXML = '<label value="I\'d love to duplicate \'' + item.name + '\'."/>';
 	
 	var libraryNames = findNamesRecursive(item);
+	libraryNames.sort(function(a,b) { return a>b?-1:1 })
 	
 	if (libraryNames && libraryNames.length) 
 	{
@@ -60,7 +61,7 @@ function DuplicateAdvanced()
 			
 			var libraryName = libraryNames[a];
 			
-			dialogXML += '<checkbox checked="'+ (item.name == libraryName)+'" id="checkbox_'+libraryName+'" label="' +libraryName+ '" width="280"/>';
+			dialogXML += '<checkbox checked="'+ (item.name == libraryName)+'" id="checkbox_'+libraryName+'" label="' +libraryName.split("/").pop() + '" />';
 			
 			if (libraryNames.length >= 8 && index % 4 == 3) dialogXML += '</hbox>';
 			index++;
@@ -71,11 +72,11 @@ function DuplicateAdvanced()
 		//oncommand="this.fl.xmlui.setEnabled(\'replaceFrom1\',false);this.o=\'\';for(a in fl) {this.o+=a+\':\'+fl[a]+\'\\n\'};alert(this.o);"
 		
 		dialogXML += '<separator/><label value="Enter new name pre- or postfix: (will apply to all newly created symbols)"/>'
-		dialogXML += '<hbox><textbox id="prefix" value="" width="150" /><label value=" + original symbol name + " width="130" /><textbox id="postfix" value="" width="150" /></hbox>';
+		dialogXML += '<hbox><textbox id="prefix" value="" width="200" /><label value=" + original symbol name + " width="140" /><textbox id="postfix" value="" width="200" /></hbox>';
 		dialogXML += '<separator/><label value="Replace values in selected symbol names: (case sensitive / will apply to all newly created symbols)"/>'
-		dialogXML += '<hbox><textbox id="replaceFrom1" value="" width="150" /><label value="                to " width="130"/><textbox id="replaceTo1" value="" width="150" /></hbox>';
-		dialogXML += '<hbox><textbox id="replaceFrom2" value="" width="150" /><label value="                to " width="130"/><textbox id="replaceTo2" value="" width="150" /></hbox>';
-		dialogXML += '<hbox><textbox id="replaceFrom3" value="" width="150" /><label value="                to " width="130"/><textbox id="replaceTo3" value="" width="150" /></hbox>';
+		dialogXML += '<hbox><textbox id="replaceFrom1" value="" width="200" /><label value="                to " width="140"/><textbox id="replaceTo1" value="" width="200" /></hbox>';
+		dialogXML += '<hbox><textbox id="replaceFrom2" value="" width="200" /><label value="                to " width="140"/><textbox id="replaceTo2" value="" width="200" /></hbox>';
+		dialogXML += '<hbox><textbox id="replaceFrom3" value="" width="200" /><label value="                to " width="140"/><textbox id="replaceTo3" value="" width="200" /></hbox>';
 		dialogXML += '<separator/><label value="Options:"/><checkbox checked="true" id="persistExportRS" label="Persist export for runtime sharing." />'
 		dialogXML += '<separator/><label value="Note: If duplication fails (mostly on duplicate names), delete the selected items in your library."/>'
 	}
@@ -242,14 +243,13 @@ function createDialogXML(xmlString, title)
 	var dialogXML = '<dialog title="'+title+'" buttons="accept, cancel" >';
 	dialogXML += '<vbox>' + xmlString + '</vbox>';
 	dialogXML +='</dialog>';
-   
-	var localConfigURI = fl.configURI;
-	// Verify that the provided path ends with ‘/’
-	if (localConfigURI.charAt(localConfigURI.length – 1) != "/") localConfigURI = localConfigURI + "/";
-
-	var path = localConfigURI + "Commands/.dialog-" + parseInt(Math.random() * 1000) + ".xml"
-	FLfile.write(path, xmlString);
-	var xmlPanelOutput = fl.getDocumentDOM().xmlPanel(path);
-	FLfile.remove(path);
-	return xmlPanelOutput;
+	
+	var url = fl.configURI + '/Commands/temp-dialog-' + parseInt(Math.random() * 777 * 777) + '.xml';
+	FLfile.write(url, dialogXML);
+	
+	var panelOutput = fl.getDocumentDOM().xmlPanel(url);
+	
+	FLfile.remove(url); 
+	
+	return panelOutput;
 }
