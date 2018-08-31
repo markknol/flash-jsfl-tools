@@ -122,6 +122,6 @@ function autoNameLayers(showWarnings)
 			
 		}
 		if (layer.layerType == "mask") layer.name = "mask";
-		else if (layer.layerType == "guide") layer.name = "guide";
+		else if (layer.layerType == "guide" && layer.name.indexOf("Layer_") != -1) layer.name = "guide";
 	}
 }
